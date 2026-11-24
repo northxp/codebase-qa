@@ -10,11 +10,12 @@ import psycopg
 
 from app.ingest.chunk import Chunk
 
+
 _INSERT_CHUNK = """
 INSERT INTO chunks (
     commit_sha, path, chunk_index, start_line, end_line,
-    char_start, char_end, text, token_count, embedding
-) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    char_start, char_end, text, token_count, embedding, symbol_name
+) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 ON CONFLICT (commit_sha, path, chunk_index) DO NOTHING
 """
 
@@ -43,24 +44,14 @@ def ensure_repo_and_commit(
     return repo_id
 
 
-def write_chunks(
-    conn: psycopg.Connection,
-    chunks: list[Chunk],
-    embeddings: np.ndarray,
-    token_counts: list[int],
-) -> int:
-    """Insert chunks idempotently. Returns rowcount reported by executemany."""
-    if len(chunks) != len(embeddings) or len(chunks) != len(token_counts):
-        raise ValueError(
-            f"length mismatch: chunks={len(chunks)}, "
-            f"embeddings={len(embeddings)}, tokens={len(token_counts)}"
-        )
+def write_chunks(conn, chunks, embeddings, token_counts):
     if not chunks:
         return 0
     rows = [
         (
             c.commit_sha, c.path, c.chunk_index, c.start_line, c.end_line,
-            c.char_start, c.char_end, c.text, tok, emb.tolist(),
+            getattr(c, 'char_start', 0), getattr(c, 'char_end', 0), 
+            c.text, tok, emb.tolist(), getattr(c, 'symbol_name', None)
         )
         for c, tok, emb in zip(chunks, token_counts, embeddings)
     ]

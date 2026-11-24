@@ -30,3 +30,10 @@ Hardware: local WSL2 (dev), AWS t3.micro (test/deploy). See each row for the env
 | Date | Variant | Split | Correct | Partial | Wrong | Invalid-citation rate | False-answer rate (5 unanswerable) | Raw |
 |------|---------|-------|---------|---------|-------|-----------------------|-------------------------------------|-----|
 | TBD  | TBD     | TBD   | TBD     | TBD     | TBD   | TBD                   | TBD                                 | TBD |
+
+
+
+| Date       | Variant | Split | Hit@5 | Recall@10 | MRR | p50 (ms) | p95 (ms) | Index (MB) | Raw |
+|------------|---------|-------|-------|-----------|-----|----------|----------|------------|-----|
+| 2026-11-24 | A       | dev   | 0.6167| 0.7250    | 0.4713| TBD    | TBD      | TBD        | (Variant A baseline) |
+| 2026-11-24 | D       | dev   | 0.9833| 0.9667    | 0.9444| TBD    | TBD      | TBD        | results/raw/2026-11-24-variant-D-dev.csv |

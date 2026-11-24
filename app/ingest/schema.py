@@ -1,9 +1,4 @@
-"""Postgres schema for the codebase-qa index.
-
-Idempotent: safe to run on every pipeline invocation. All DDL uses IF NOT EXISTS.
-The `commits` table records every ingested commit. `chunks` holds one row per
-embedded chunk, keyed by (commit_sha, path, chunk_index) for idempotent upsert.
-"""
+"""Postgres schema for the codebase-qa index."""
 from __future__ import annotations
 
 from app.ingest.embed import DIM
@@ -40,6 +35,7 @@ _STATEMENTS: list[str] = [
         text TEXT NOT NULL,
         token_count INTEGER NOT NULL,
         embedding vector({DIM}) NOT NULL,
+        symbol_name TEXT,
         UNIQUE (commit_sha, path, chunk_index)
     )
     """,
@@ -47,6 +43,11 @@ _STATEMENTS: list[str] = [
     """
     CREATE INDEX IF NOT EXISTS chunks_embedding_hnsw
     ON chunks USING hnsw (embedding vector_cosine_ops)
+    """,
+    
+    """
+    CREATE INDEX IF NOT EXISTS chunks_symbol_name_idx
+    ON chunks (symbol_name)
     """,
 ]
 
