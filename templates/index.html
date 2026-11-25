@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="mb-8 text-center">
+        <h1 class="text-3xl font-semibold mb-2">What do you want to know?</h1>
+        <p class="text-zinc-400">Ask questions about the code. Get answers with exact citations.</p>
+    </div>
+
+    <!-- The Chat Form -->
+    <form hx-post="/ask-ui" hx-target="#chat-history" hx-swap="beforeend" hx-indicator="#spinner" 
+          class="bg-surface border border-zinc-800 rounded-xl p-2 shadow-lg flex flex-col gap-2 relative">
+        
+        <div class="flex gap-2">
+            <select name="repo" class="bg-background border border-zinc-800 rounded-lg px-3 py-3 text-sm focus:outline-none focus:border-brand">
+                <option value="psf/requests">psf/requests</option>
+                <option value="pallets/click">pallets/click</option>
+            </select>
+            
+            <input type="text" name="question" placeholder="e.g. How does a Session send a request?" required 
+                   class="flex-1 bg-background border border-zinc-800 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand transition-all">
+            
+            <button type="submit" class="bg-brand hover:bg-blue-600 text-white font-medium px-6 rounded-lg transition-colors flex items-center justify-center">
+                Ask
+            </button>
+        </div>
+        
+        <div id="spinner" class="htmx-indicator absolute -bottom-8 left-0 text-sm text-brand animate-pulse">
+            Searching codebase and generating answer...
+        </div>
+    </form>
+
+    <!-- Chat History Area -->
+    <div id="chat-history" class="mt-8 flex flex-col gap-6">
+        <!-- Answers will be appended here -->
+    </div>
+</div>
+{% endblock %}

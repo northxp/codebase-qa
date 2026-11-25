@@ -22,3 +22,9 @@ class AskResponse(BaseModel):
     repo: str
     question: str
     chunks: list[RetrievedChunk]
+
+# Add to app/api/models.py
+class AskResponseWithLLM(AskResponse):
+    answer: str
+    valid_citations: list[str]
+    invalid_citations: list[str]
