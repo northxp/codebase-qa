@@ -1,0 +1,17 @@
+[
+  {
+    "ef_search": 10,
+    "recall_at_10": 0.9,
+    "latency_ms": 6.873919450026733
+  },
+  {
+    "ef_search": 40,
+    "recall_at_10": 0.9,
+    "latency_ms": 5.978748699976677
+  },
+  {
+    "ef_search": 100,
+    "recall_at_10": 0.9,
+    "latency_ms": 6.485498099959841
+  }
+]
