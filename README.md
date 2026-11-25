@@ -28,6 +28,13 @@ Evaluated on 60 questions per repo across 5 public Python repos.
 *Note: Variant D and F tie on lookup questions because the exact Symbol Lookup 
 mechanism dominates. The embedding model choice only impacts semantic "behavior" questions.*
 
+## Failure Modes & Limitations
+
+- **Data Pipeline Alignment (The "FlaskyStyle" Failure):** Our AST dataset generator accidentally generated a question for `FlaskyStyle`, a function located in `docs/_themes/`. Because our ingestion filter correctly ignores `docs/` (per best practices), the chunk was not in the database. This resulted in a "miss", proving that dataset generation must strictly align with the ingestion filter.
+- **Dynamic Python:** Decorators, metaclasses, and `__getattr__` are invisible to static AST parsing. 
+- **External Dependencies:** If a repo leans heavily on an external library (e.g., `flask` leans on `werkzeug`), answers that live in the dependency won't be found.
+- **Scale:** The current HNSW sweep showed flat latency (~6ms) at 300 chunks. At 100k+ chunks, tuning `ef_search` and `m` becomes critical.
+
 ## Tech Stack
 - **Backend:** FastAPI, Python 3.12
 - **Database:** Postgres + pgvector (HNSW index)
