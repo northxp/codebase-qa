@@ -6,53 +6,67 @@
     <title>Codebase Q&A</title>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['ui-monospace', 'monospace'] },
                     colors: {
-                        brand: '#3b82f6',
-                        surface: '#18181b',
-                        background: '#09090b',
+                        app: '#0f0f11',
+                        surface: '#1c1c1f',
+                        border: '#2e2e33',
+                        brand: '#3b82f6'
                     }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #09090b; color: #f4f4f5; }
+        body { background-color: #0f0f11; color: #f4f4f5; }
         .htmx-indicator { display: none; }
-        .htmx-request .htmx-indicator { display: inline-block; }
-        .htmx-request.htmx-indicator { display: inline-block; }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #18181b; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        .htmx-request .htmx-indicator { display: inline-flex; }
+        .htmx-request.htmx-indicator { display: inline-flex; }
+        /* Custom scrollbar for chat */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        
+        /* Smooth markdown styling */
+        .prose pre { background: #1c1c1f !important; border: 1px solid #2e2e33; border-radius: 12px; padding: 1rem; }
+        .prose p { margin-bottom: 1rem; }
     </style>
 </head>
-<body class="min-h-screen font-sans antialiased">
-    <nav class="border-b border-zinc-800 bg-surface/80 backdrop-blur-sm sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-brand rounded-lg flex items-center justify-center font-bold text-white">&lt;/&gt;</div>
-                <span class="font-semibold text-lg tracking-tight">Codebase Q&A</span>
+<body class="h-screen overflow-hidden flex flex-col font-sans antialiased selection:bg-brand/30">
+    <!-- Top Navigation -->
+    <nav class="h-16 flex-shrink-0 border-b border-border bg-app/80 backdrop-blur-xl flex items-center justify-between px-6 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                <span class="text-black font-bold text-sm tracking-tighter">&lt;/&gt;</span>
             </div>
-            {% if user %}
-                <div class="flex items-center gap-4 text-sm">
-                    <span class="text-zinc-400">{{ user }}</span>
-                    <a href="/logout" class="text-zinc-400 hover:text-white transition-colors">Logout</a>
-                </div>
-            {% endif %}
+            <span class="font-semibold text-lg tracking-tight text-white">Codebase</span>
         </div>
+        
+        {% if user %}
+        <!-- User Profile / Actions -->
+        <div class="flex items-center gap-4">
+            {% if user.role == 'admin' %}
+            <a href="/admin" class="text-sm text-zinc-400 hover:text-white transition-colors font-medium">Admin</a>
+            {% endif %}
+            <div class="h-4 w-px bg-border"></div>
+            <span class="text-sm text-zinc-300 font-medium">{{ user.username }}</span>
+            <a href="/logout" class="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">Logout</a>
+        </div>
+        {% endif %}
     </nav>
 
-    <main class="max-w-4xl mx-auto px-4 py-12">
+    <!-- Main Content Area (Fixed to viewport, no page scroll) -->
+    <main class="flex-1 overflow-hidden relative">
         {% block content %}{% endblock %}
     </main>
 </body>
